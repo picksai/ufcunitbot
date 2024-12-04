@@ -3,17 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UFC Unit Manager</title>
+    <title>UFC Betting Bot</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <h1>UFC Unit Management Bot</h1>
+    <h1>UFC Betting Bot</h1>
     <form method="POST">
-        <label for="fighter_name">Enter Fighter Names (separate with commas):</label>
-        <input type="text" id="fighter_name" name="fighter_name" required><br><br>
+        <div id="fighters">
+            <div class="fighter-section">
+                <h3>Fighter 1</h3>
+                <label for="fighter_name_1">Enter Fighter Name:</label>
+                <input type="text" id="fighter_name_1" name="fighter_name" required><br><br>
 
-        <label for="condition">Enter Fighter Conditions (separate with commas, e.g., normal, mentally unprepared):</label>
-        <input type="text" id="condition" name="condition" required><br><br>
+                <label for="fighter_odds_1">Enter Fighter Odds:</label>
+                <input type="number" step="0.01" id="fighter_odds_1" name="fighter_odds" required><br><br>
+
+                <label for="fighter_condition_1">Enter Fighter Condition:</label>
+                <input type="text" id="fighter_condition_1" name="fighter_condition" required><br><br>
+            </div>
+            <div class="fighter-section">
+                <h3>Fighter 2</h3>
+                <label for="fighter_name_2">Enter Fighter Name:</label>
+                <input type="text" id="fighter_name_2" name="fighter_name" required><br><br>
+
+                <label for="fighter_odds_2">Enter Fighter Odds:</label>
+                <input type="number" step="0.01" id="fighter_odds_2" name="fighter_odds" required><br><br>
+
+                <label for="fighter_condition_2">Enter Fighter Condition:</label>
+                <input type="text" id="fighter_condition_2" name="fighter_condition" required><br><br>
+            </div>
+            <!-- Add more fighter sections as needed -->
+        </div>
 
         <label for="stake">Enter Your Stake:</label>
         <input type="number" id="stake" name="stake" value="10" required><br><br>
