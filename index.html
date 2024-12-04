@@ -4,57 +4,63 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>UFC Unit Manager</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <script>
-        let fighterCount = 1;  // Starting with one fighter section
-
-        // Function to add a new fighter section dynamically
-        function addFighter() {
-            fighterCount++;
-            let newFighterSection = document.createElement('div');
-            newFighterSection.classList.add('fighter-section');
-            newFighterSection.innerHTML = `
-                <h3>Fighter ${fighterCount}</h3>
-                <label for="fighter_name_${fighterCount}">Enter Fighter Name:</label>
-                <input type="text" id="fighter_name_${fighterCount}" name="fighter_name" required><br><br>
-                
-                <label for="fighter_odds_${fighterCount}">Enter Fighter Odds:</label>
-                <input type="number" step="0.01" id="fighter_odds_${fighterCount}" name="fighter_odds" required><br><br>
-                
-                <label for="fighter_condition_${fighterCount}">Enter Fighter Condition:</label>
-                <input type="text" id="fighter_condition_${fighterCount}" name="fighter_condition" required><br><br>
-            `;
-            document.getElementById('fighters').appendChild(newFighterSection);
+    <style>
+        body {
+            background-color: #d3d3d3; /* Light grey */
+            font-family: Arial, sans-serif;
+            color: #333;
+            padding: 20px;
         }
-    </script>
+
+        h1 {
+            color: #333;
+        }
+
+        form {
+            background-color: #f4f4f4;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        label, input, button {
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+
+        button {
+            background-color: #4CAF50; /* Green */
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
 </head>
 <body>
     <h1>UFC Unit Management Bot</h1>
     <form method="POST">
-        <div id="fighters">
-            <div class="fighter-section">
-                <h3>Fighter 1</h3>
-                <label for="fighter_name_1">Enter Fighter Name:</label>
-                <input type="text" id="fighter_name_1" name="fighter_name" required><br><br>
+        <label for="fighter_name">Enter Fighter Names (separate with commas):</label>
+        <input type="text" id="fighter_name" name="fighter_name" required><br><br>
 
-                <label for="fighter_odds_1">Enter Fighter Odds:</label>
-                <input type="number" step="0.01" id="fighter_odds_1" name="fighter_odds" required><br><br>
+        <label for="fighter_odds">Enter Fighter Odds (separate with commas):</label>
+        <input type="text" id="fighter_odds" name="fighter_odds" required><br><br>
 
-                <label for="fighter_condition_1">Enter Fighter Condition:</label>
-                <input type="text" id="fighter_condition_1" name="fighter_condition" required><br><br>
-            </div>
-        </div>
-
-        <button type="button" onclick="addFighter()">Add Another Fighter</button><br><br>
+        <label for="fighter_condition">Enter Fighter Conditions (optional, separate with commas, e.g., normal, mentally unprepared):</label>
+        <input type="text" id="fighter_condition" name="fighter_condition"><br><br>
 
         <label for="stake">Enter Your Stake:</label>
-        <input type="number" id="stake" name="stake" value="10" required><br><br>
+        <input type="number" id="stake" name="stake" value="10" min="1"><br><br>
 
         <button type="submit">Calculate Parlay Payout</button>
     </form>
 
     {% if parlays %}
-        <h2>Parlays and Payouts:</h2>
+        <h2>Generated Parlays</h2>
         <ul>
             {% for parlay, payout in zip(parlays, payouts) %}
                 <li>{{ parlay }} - Payout: ${{ payout }}</li>
