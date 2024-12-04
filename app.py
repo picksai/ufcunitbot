@@ -1,66 +1,60 @@
 from flask import Flask, render_template, request
+from itertools import combinations
 
 app = Flask(__name__)
 
-# Define the Fighter class to store fighter name, odds, and condition
-class Fighter:
-    def __init__(self, name, odds, condition="normal"):
-        self.name = name
-        self.odds = odds
-        self.condition = condition
-
-    def __repr__(self):
-        return f"{self.name} ({self.odds}) - {self.condition}"
-
-# Function to generate parlays based on the selected fighters
-def generate_parlays(fighters, stake):
+def generate_parlays(fighters, odds):
+    """
+    Generate all possible parlay combinations.
+    
+    :param fighters: List of fighter names
+    :param odds: List of corresponding fighter odds
+    :return: List of parlay combinations with payouts
+    """
     parlays = []
-    for i in range(len(fighters)):
-        # For simplicity, create 2-leg parlays for each fighter with the others
-        for j in range(i + 1, len(fighters)):
-            parlay_fighters = [fighters[i], fighters[j]]
-            parlays.append(Parlay(parlay_fighters, stake))
-    return parlays
-
-# Parlay class to calculate the payout for a parlay
-class Parlay:
-    def __init__(self, fighters, stake):
-        self.fighters = fighters
-        self.stake = stake
-
-    def calculate_payout(self):
-        total_odds = 1
-        for fighter in self.fighters:
-            total_odds *= fighter.odds  # Multiply the odds of each fighter in the parlay
-        return round(self.stake * total_odds, 2)
+    payouts = []
+    
+    # Combine fighters and odds into a dictionary
+    picks = dict(zip(fighters, odds))
+    
+    # Generate 2-fighter parlays
+    for r in range(2, min(len(fighters) + 1, 4)):  # Limit to 3-fighter parlays max
+        for combo in combinations(fighters, r):
+            parlay_odds = 1
+            parlay_fighters = []
+            
+            for fighter in combo:
+                fighter_index = fighters.index(fighter)
+                parlay_odds *= odds[fighter_index]
+                parlay_fighters.append(f"{fighter} ({odds[fighter_index]})")
+            
+            parlays.append(' + '.join(parlay_fighters))
+            payouts.append(round(parlay_odds, 2))
+    
+    return parlays, payouts
 
 @app.route('/', methods=['GET', 'POST'])
-def home():
-    if request.method == 'POST':
-        fighter_names = request.form.getlist('fighter_name')  # List of fighter names
-        fighter_odds = request.form.getlist('fighter_odds')  # List of fighter odds
-        fighter_conditions = request.form.getlist('fighter_condition')  # List of conditions (optional)
-        stake = float(request.form.get('stake', 10))  # Default stake is 10 if not provided
-        
-        fighters = []
-        
-        # Create Fighter objects for each fighter name
-        for i in range(len(fighter_names)):
-            odds = float(fighter_odds[i])  # Convert odds to float
-            # If no condition provided, default it to "normal"
-            condition = fighter_conditions[i] if i < len(fighter_conditions) else "normal"
-            fighter = Fighter(fighter_names[i], odds, condition)
-            fighters.append(fighter)
-        
-        # Generate parlays based on selected fighters
-        parlays = generate_parlays(fighters, stake)
-        
-        # Calculate payouts for each parlay
-        payouts = [parlay.calculate_payout() for parlay in parlays]
-        
-        return render_template('index.html', parlays=parlays, payouts=payouts)
+def index():
+    parlays = None
+    payouts = None
     
-    return render_template('index.html', parlays=None, payouts=None)
+    if request.method == 'POST':
+        # Parse input
+        fighter_names = [name.strip() for name in request.form['fighter_name'].split(',')]
+        fighter_odds = [float(odd.strip()) for odd in request.form['fighter_odds'].split(',')]
+        
+        # Optional: handle conditions (not used in this version)
+        # conditions = request.form['fighter_condition'].split(',') if request.form['fighter_condition'] else []
+        
+        stake = float(request.form['stake'])
+        
+        # Generate parlays
+        parlays, payouts = generate_parlays(fighter_names, fighter_odds)
+        
+        # Calculate actual payouts based on stake
+        payouts = [round(stake * payout, 2) for payout in payouts]
+    
+    return render_template('index.html', parlays=parlays, payouts=payouts)
 
 if __name__ == '__main__':
     app.run(debug=True)
