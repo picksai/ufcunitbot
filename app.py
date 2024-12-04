@@ -47,7 +47,8 @@ def home():
         # Create Fighter objects for each fighter name
         for i in range(len(fighter_names)):
             odds = float(fighter_odds[i])  # Convert odds to float
-            condition = fighter_conditions[i] if i < len(fighter_conditions) else "normal"  # Use "normal" if no condition
+            # If no condition provided, default it to "normal"
+            condition = fighter_conditions[i] if i < len(fighter_conditions) else "normal"
             fighter = Fighter(fighter_names[i], odds, condition)
             fighters.append(fighter)
         
