@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UFC Betting Bot</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <h1>UFC Betting Bot</h1>
+    <form method="POST">
+        <label for="fighter_name">Enter Fighter Names (separate with commas):</label>
+        <input type="text" id="fighter_name" name="fighter_name" required><br><br>
+
+        <label for="condition">Enter Fighter Conditions (separate with commas, e.g., normal, mentally unprepared):</label>
+        <input type="text" id="condition" name="condition" required><br><br>
+
+        <label for="stake">Enter Your Stake:</label>
+        <input type="number" id="stake" name="stake" value="10" required><br><br>
+
+        <button type="submit">Calculate Parlay Payout</button>
+    </form>
+
+    {% if payout is not none %}
+    <h2>Parlay Payout: ${{ payout }}</h2>
+    {% endif %}
+</body>
+</html>
