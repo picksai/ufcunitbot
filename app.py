@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request
+
 app = Flask(__name__)
 
 class Fighter:
@@ -33,15 +34,16 @@ def home():
     if request.method == 'POST':
         # Getting the user inputs for fighters and conditions
         fighter_names = request.form.getlist('fighter_name')  # List of fighter names
-        conditions = request.form.getlist('condition')  # List of conditions
+        fighter_odds = request.form.getlist('fighter_odds')  # List of fighter odds
+        fighter_conditions = request.form.getlist('fighter_condition')  # List of conditions
         stake = float(request.form.get('stake', 10))  # Default stake is 10 if not provided
         
         fighters = []
         
         for i in range(len(fighter_names)):
-            # Here we just assume odds, you can modify this to get live data
-            odds = 1.5  # Placeholder odds for simplicity
-            fighter = Fighter(fighter_names[i], odds, conditions[i])
+            # Create each fighter object using the name, odds, and condition
+            odds = float(fighter_odds[i])  # Convert odds to float
+            fighter = Fighter(fighter_names[i], odds, fighter_conditions[i])
             fighters.append(fighter)
         
         bet = Bet(fighters, stake)  # Create a bet with the selected fighters
